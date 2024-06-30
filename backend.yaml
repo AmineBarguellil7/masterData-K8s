@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: master-data-backend
+  labels:
+    app: master-data-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: master-data-backend
+  template:
+    metadata:
+      labels:
+        app: master-data-backend
+    spec:
+      containers:
+      - name: master-data-backend
+        image: aminebarguellil/master-data:backend
+        ports:
+        - containerPort: 8081
+        # envFrom:
+        #   - configMapRef:
+        #       name: masterdata-keycloak-config
+        env:
+        - name: FRONTEND_URL
+          value: "http://192.168.65.3:30200"
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: postgres-user 
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: postgres-password
+        - name: SPRING_DATASOURCE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: postgres-config
+              key: postgres-url
+        - name: PORT
+          value: "8081"
+        - name: KAFKA_BROKER
+          value: kafka-service:9092
+        - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+          valueFrom:
+            configMapKeyRef:
+              name: masterdata-keycloak-config
+              key: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+        - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
+          valueFrom:
+            configMapKeyRef:
+              name: masterdata-keycloak-config
+              key: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
+      imagePullSecrets:
+        - name: my-dockerhub-secret
+
+
+--- #multiple yaml configuration within 1 file
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: master-data-backend
+spec:
+  type: NodePort
+  selector:
+    app: master-data-backend
+  ports:
+    - protocol: TCP
+      port: 8081 #l service accessible fel cluster bl @ip te3ou w bl port tajjm t7otnfs l port maa l container kima tajjm lee
+      targetPort: 8081 #container port ya3ni l port mta3 l pods that belongs to the service
+      nodePort: 30101

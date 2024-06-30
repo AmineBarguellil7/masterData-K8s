@@ -1,0 +1,31 @@
+postgresql:
+  image: postgres:11
+  containerName: postgres-keycloak
+  db:
+    name: keycloak
+    user: postgres
+    password: postgres
+  service:
+    port: 5432
+  persistence:
+    enabled: true
+    size: 3Gi
+  resources: {}
+
+keycloak:
+  image: quay.io/keycloak/keycloak:24.0.2
+  containerName: keycloak
+  admin:
+    user: admin
+    password: admin
+  db:
+    type: postgres
+    username: postgres
+    password: postgres
+    schema: public
+    database: keycloak
+    port: 5432
+    host: postgres-keycloak
+  service:
+    port: 8080
+  resources: {}

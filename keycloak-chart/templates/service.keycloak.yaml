@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.keycloak.containerName }}
+spec:
+  type: NodePort
+  ports:
+    - port: {{ .Values.keycloak.service.port }}
+      targetPort: {{ .Values.keycloak.service.port }}
+      protocol: TCP
+      nodePort: 30100
+  selector:
+    app: {{ .Values.keycloak.containerName }}

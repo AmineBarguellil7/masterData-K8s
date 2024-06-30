@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.keycloak.containerName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.keycloak.containerName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.keycloak.containerName }}
+    spec:
+      containers:
+        - name: {{ .Values.keycloak.containerName }}
+          image: {{ .Values.keycloak.image }}
+          ports:
+            - containerPort: {{ .Values.keycloak.service.port }}
+          env:
+            - name: KC_DB
+              value: {{ .Values.keycloak.db.type }}
+            - name: KC_DB_USERNAME
+              value: {{ .Values.keycloak.db.username }}
+            - name: KC_DB_PASSWORD
+              value: {{ .Values.keycloak.db.password }}
+            - name: KC_DB_SCHEMA
+              value: {{ .Values.keycloak.db.schema }}
+            - name: KC_DB_URL_DATABASE
+              value: {{ .Values.keycloak.db.database }}
+            - name: KC_DB_URL_PORT
+              value: "{{ .Values.keycloak.db.port }}"
+            - name: KC_DB_URL_HOST
+              value: {{ .Values.keycloak.db.host }}
+            - name: KEYCLOAK_ADMIN
+              value: {{ .Values.keycloak.admin.user }}
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: {{ .Values.keycloak.admin.password }}
+          command:
+            - "/opt/keycloak/bin/kc.sh"
+            - "start-dev"
+            - "-Dkeycloak.profile.feature.upload_scripts=enabled"

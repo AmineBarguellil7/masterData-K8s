@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: master-data-frontend
+  labels:
+    app: master-data-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: master-data-frontend
+  template:
+    metadata:
+      labels:
+        app: master-data-frontend
+    spec:
+      containers:
+      - name: master-data-frontend
+        image: aminebarguellil/master-data:frontend
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+        - name: my-dockerhub-secret
+
+--- #multiple yaml configuration within 1 file
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: master-data-frontend
+spec:
+  type: NodePort
+  selector:
+    app: master-data-frontend
+  ports:
+    - protocol: TCP
+      port: 80 #l service accessible fel cluster bl @ip te3ou w bl port tajjm t7otnfs l port maa l container kima tajjm lee
+      targetPort: 80 #container port ya3ni l port mta3 l pods that belongs to the service
+      nodePort: 30200
