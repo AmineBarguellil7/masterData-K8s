@@ -1,1 +1,1 @@
-Trying to Trigger a pipeline
+🚨 This repository was used to deploy the entire application, including both the front-end ([master-data-ui](https://github.com/AmineBarguellil7/master-data-ui)) and back-end ([master-data](https://github.com/AmineBarguellil7/master-data)), on a local Kubernetes cluster using Docker Desktop, as well as for deployment on AWS.
